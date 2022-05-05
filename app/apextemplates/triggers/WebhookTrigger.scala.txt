@@ -1,0 +1,9 @@
+@(name: String, sobject: String, events: List[String], url: String)trigger @{name}WebhookTrigger on @{sobject} (@{events.mkString(",")}) {
+
+    String url = '@url';
+
+    String content = Webhook.jsonContent(Trigger.new, Trigger.old);
+
+    Webhook.callout(url, content);
+
+}

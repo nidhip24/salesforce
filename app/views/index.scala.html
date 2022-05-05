@@ -1,0 +1,28 @@
+@this(forceUtil: utils.ForceUtil, webJarsUtil: org.webjars.play.WebJarsUtil)
+@(implicit request: RequestHeader)
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+    <head>
+        <title>Salesforce Webhook Creator</title>
+        @webJarsUtil.locate("bootstrap.min.css").css()
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Salesforce Webhook Creator</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div>
+                <a href="@forceUtil.loginUrl(forceUtil.ENV_PROD)" class="btn btn-default">Login via Salesforce - Normal Instance</a>
+                <a href="@forceUtil.loginUrl(forceUtil.ENV_SANDBOX)" class="btn btn-default">Login via Salesforce - Sandbox Instance</a>
+            </div>
+        </div>
+
+    </body>
+</html>

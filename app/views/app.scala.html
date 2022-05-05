@@ -1,0 +1,93 @@
+@this(webJarsUtil: org.webjars.play.WebJarsUtil)
+
+@(implicit requestHeader: RequestHeader)
+
+@import helper._
+
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+    <head>
+        <title>Salesforce Webhook Creator</title>
+        @webJarsUtil.locate("bootstrap.min.css").css()
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+
+        @webJarsUtil.requireJs(routes.Assets.versioned("javascripts/app.js"))
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Salesforce Webhook Creator</a>
+                </div>
+                <a href="@routes.Application.logout" class="navbar-btn btn btn-default pull-right">Logout</a>
+            </div>
+        </div>
+
+        <div class="container" ng-cloak>
+            <div ng-controller="WebhooksController" ng-init="csrfToken='@CSRF.getToken.value'">
+                <h2>Your Webhooks</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>SObject</th>
+                            <th>Events</th>
+                            <th>URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="webhook in webhooks">
+                            <td>{{webhook.name}}</td>
+                            <td>{{webhook.sobject}}</td>
+                            <td>{{webhook.events.join(", ")}}</td>
+                            <td>{{webhook.url}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h2>Create a new Webhook</h2>
+                <form name="webhookForm" role="form" class="form-horizontal" ng-submit="createWebhook()">
+                    <fieldset name="fields" ng-disabled="working">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-3 control-label">Name</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="name" name="name" ng-model="name" ng-pattern="/[a-zA-Z]/" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="sobject" class="col-sm-3 control-label">SObject</label>
+                            <div class="col-sm-6">
+                                <select id="sobject" name="sobject" class="form-control" ng-model="sobject" required>
+                                    <option ng-repeat="sobject in sobjects">{{sobject}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Events</label>
+                            <div class="col-sm-6">
+                                <label ng-repeat="event in ['before insert','before update','before delete','after insert','after update','after delete','after undelete']" for="{{event}}" class="checkbox-inline">
+                                    <input type="checkbox" ng-model="events[event]" id="{{event}}" name="{{event}}" value="{{event}}"> {{event}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="url" class="col-sm-3 control-label">URL</label>
+                            <div class="col-sm-6">
+                                <input type="url" class="form-control" id="url" name="url" ng-model="url" required>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-right: 5px;">
+                            <div class="col-sm-offset-1 col-sm-8 bg-danger" ng-show="errorMessage">{{errorMessage}}</div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-6">
+                                <button type="submit" class="btn btn-default">Create Webhook</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+    </body>
+</html>
